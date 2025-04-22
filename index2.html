@@ -4,636 +4,418 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .tabs button {
-            padding: 10px 20px;
-            margin: 0 5px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .tabs button:hover {
-            background-color: #45a049;
-        }
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        form {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button[type="submit"], button[type="button"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button[type="submit"]:hover, button[type="button"]:hover {
-            background-color: #45a049;
-        }
-        #search-results, #bill-results {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-        #msg {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-            text-align: center;
-        }
-        #msg.success {
-            background-color: #dff0d8;
-            color: #3c763d;
-        }
-        #msg.error {
-            background-color: #f2dede;
-            color: #a94442;
-        }
-        #msg.warning {
-            background-color: #fcf8e3;
-            color: #8a6d3b;
-        }
-        #msg.info {
-            background-color: #d9edf7;
-            color: #31708f;
-        }
-        .search-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .search-options > div {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .search-options label {
-            margin: 0;
-            min-width: 120px;
-        }
-        .search-options input {
-            flex-grow: 1;
-            margin: 0;
-        }
-        .search-options button {
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
     <h1>Hospital Management System</h1>
     <div class="tabs">
-        <button onclick="showTab('add-patient')">Add Patient</button>
-        <button onclick="showTab('search-patient')">Search Patients</button>
-        <button onclick="showTab('manage-patient')">Manage Patients</button>
-        <button onclick="showTab('bill-management')">Bill Management</button>
-    </div>
-
-    <!-- Add Patient Tab -->
-    <div id="add-patient" class="tab-content active">
-        <form id="patientadmit">
-            <h2>Add New Patient</h2>
-            <label>First Name:</label>
-            <input type="text" id="firstname" required><br>
-            <label>Last Name:</label>
-            <input type="text" id="lastname" required><br>
-            <label>DOB:</label>
-            <input type="date" id="date" required><br>
-            <label>Gender:</label>
-            <select id="gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-            </select><br>
-            <button type="submit">Add Patient</button>
-        </form>
-    </div>
-
-    <!-- Search Patient Tab -->
-    <div id="search-patient" class="tab-content">
-        <h2>Search Patients</h2>
-        <div class="search-options">
-            <div>
-                <label>Search by Name: </label>
-                <input type="text" id="searchname" placeholder="Enter first name">
-                <button type="button" id="searchpatient">Search</button>
-            </div>
-            <div>
-                <label>Search by ID: </label>
-                <input type="text" id="searchid" placeholder="Enter patient ID">
-                <button type="button" id="searchbyid">Search</button>
-            </div>
-        </div>
-        <div id="search-results"></div>
-    </div>
-
-    <!-- Manage Patient Tab -->
-    <div id="manage-patient" class="tab-content">
-        <h2>Manage Patients</h2>
-        <div>
-            <label>Patient ID to Update/Delete: </label>
-            <input type="text" id="manage-id" placeholder="Enter patient ID">
-            <button type="button" id="fetch-patient">Fetch</button>
-        </div>
-        <form id="update-patient-form" style="display:none;">
-            <label>First Name:</label>
-            <input type="text" id="update-firstname" required><br>
-            <label>Last Name:</label>
-            <input type="text" id="update-lastname" required><br>
-            <label>DOB:</label>
-            <input type="date" id="update-dob" required><br>
-            <label>Gender:</label>
-            <select id="update-gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-            </select><br>
-            <button type="submit">Update Patient</button>
-            <button type="button" id="delete-patient">Delete Patient</button>
-        </form>
-    </div>
-
-    <!-- Bill Management Tab -->
-    <div id="bill-management" class="tab-content">
-        <h2>Bill Management</h2>
-        <div class="search-options">
-            <div>
-                <label>Patient ID: </label>
-                <input type="text" id="bill-patient-id" placeholder="Enter patient ID">
-                <button type="button" id="fetch-bills">Fetch Bills</button>
-            </div>
-            <div>
-                <label>Bill ID: </label>
-                <input type="text" id="bill-id" placeholder="Enter bill ID">
-                <button type="button" id="fetch-bill">Fetch Bill</button>
-            </div>
-        </div>
-        
-        <div id="bill-results"></div>
-        
-        <h3>Add/Update Bill</h3>
-        <form id="bill-form">
-            <input type="hidden" id="edit-bill-id">
-            <label>Patient ID:</label>
-            <input type="text" id="bill-p-id" required><br>
-            <label>Total Amount:</label>
-            <input type="number" step="0.01" id="bill-amount" required><br>
-            <label>Payment Status:</label>
-            <select id="bill-status" required>
-                <option value="Paid">Paid</option>
-                <option value="Pending">Pending</option>
-                <option value="Partial">Partial</option>
-            </select><br>
-            <label>Due Amount:</label>
-            <input type="number" step="0.01" id="bill-due" value="0.00"><br>
-            <button type="submit" id="save-bill">Add Bill</button>
-            <button type="button" id="update-bill" style="display:none;">Update Bill</button>
-            <button type="button" id="cancel-edit" style="display:none;">Cancel</button>
-            <button type="button" id="delete-bill" style="display:none;">Delete Bill</button>
-        </form>
+        <button onclick="showTab('patient-tab')">Patients</button>
+        <button onclick="showTab('doctor-tab')">Doctors</button>
+        <button onclick="showTab('room-tab')">Rooms</button>
+        <button onclick="showTab('appointment-tab')">Appointments</button>
+        <button onclick="showTab('admission-tab')">Admissions</button>
+        <button onclick="showTab('medical-record-tab')">Medical Records</button>
+        <button onclick="showTab('bill-tab')">Billing</button>
     </div>
 
     <div id="msg"></div>
 
-    <script>
-        // Tab management
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-        }
+    <!-- Patient Tab -->
+    <div id="patient-tab" class="tab-content active">
+        <div class="search-options">
+            <div>
+                <label>Search Patients:</label>
+                <input type="text" id="patient-search" placeholder="Enter name or ID">
+                <button type="button" onclick="searchPatients()">Search</button>
+                <button type="button" onclick="resetPatientSearch()">Reset</button>
+            </div>
+        </div>
 
-        // Message display
-        function showMessage(message, type) {
-            const msgDiv = document.getElementById('msg');
-            msgDiv.innerText = message;
-            msgDiv.className = type;
-            setTimeout(() => msgDiv.innerText = '', 5000);
-        }
+        <div id="patient-results">
+            <table id="patient-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Gender</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-        // Patient Management
-        document.getElementById('patientadmit').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const data = {
-                firstname: document.getElementById('firstname').value,
-                lastname: document.getElementById('lastname').value,
-                dob: document.getElementById('date').value,
-                gender: document.getElementById('gender').value
-            };
-            try {
-                const response = await fetch('http://localhost:3000/patient', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showMessage(`Patient Added with P_ID: ${result.patientId}`, 'success');
-                    document.getElementById('patientadmit').reset();
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Request failed: ', err);
-                showMessage('Network Error!!', 'error');
-            }
-        });
+        <h2 id="patient-form-title">Add New Patient</h2>
+        <form id="patient-form">
+            <input type="hidden" id="patient-id">
+            <div class="form-row">
+                <div>
+                    <label>First Name:</label>
+                    <input type="text" id="patient-firstname" required>
+                </div>
+                <div>
+                    <label>Last Name:</label>
+                    <input type="text" id="patient-lastname" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Date of Birth:</label>
+                    <input type="date" id="patient-dob" required>
+                </div>
+                <div>
+                    <label>Gender:</label>
+                    <select id="patient-gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="patient-submit">Add Patient</button>
+                <button type="button" id="patient-cancel" style="display:none;" onclick="resetPatientForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
 
-        document.getElementById('searchpatient').addEventListener('click', async function() {
-            const name = document.getElementById('searchname').value.trim();
-            if(!name) {
-                showMessage('Please enter a name to search.', 'warning');
-                return;
-            }
-            try {
-                const response = await fetch(`http://localhost:3000/patient/search/${encodeURIComponent(name)}`);
-                const result = await response.json();
-                if(response.ok) {
-                    if(result.length === 0) {
-                        showMessage('No patient found with that name.', 'info');
-                    } else {
-                        let output = '<h3>Matching Patients:</h3><ul>';
-                        output += result.map(p => 
-                            `<li>ID: ${p.p_id}, Name: ${p.firstname} ${p.lastname}, DOB: ${p.dob}, Gender: ${p.gender}</li>`
-                        ).join('');
-                        output += '</ul>';
-                        document.getElementById('search-results').innerHTML = output;
-                    }
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Search failed:', err);
-                showMessage('Network Error during search!', 'error');
-            }
-        });
+    <!-- Doctor Tab -->
+    <div id="doctor-tab" class="tab-content">
+        <div class="search-options">
+            <div>
+                <label>Search Doctors:</label>
+                <input type="text" id="doctor-search" placeholder="Enter name or specialization">
+                <button type="button" onclick="searchDoctors()">Search</button>
+                <button type="button" onclick="resetDoctorSearch()">Reset</button>
+            </div>
+        </div>
 
-        document.getElementById('searchbyid').addEventListener('click', async function() {
-            const id = document.getElementById('searchid').value.trim();
-            if(!id) {
-                showMessage('Please enter an ID to search.', 'warning');
-                return;
-            }
-            try {
-                const response = await fetch(`http://localhost:3000/patient/${id}`);
-                const result = await response.json();
-                if (response.ok) {
-                    let output = '<h3>Patient Found:</h3><ul>';
-                    output += `<li>ID: ${result.p_id}</li>`;
-                    output += `<li>Name: ${result.firstname} ${result.lastname}</li>`;
-                    output += `<li>DOB: ${result.dob}</li>`;
-                    output += `<li>Gender: ${result.gender}</li></ul>`;
-                    document.getElementById('search-results').innerHTML = output;
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Search failed:', err);
-                showMessage('Network Error during search!', 'error');
-            }
-        });
+        <div id="doctor-results">
+            <table id="doctor-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-        document.getElementById('fetch-patient').addEventListener('click', async function() {
-            const id = document.getElementById('manage-id').value.trim();
-            if(!id) {
-                showMessage('Please enter a patient ID.', 'warning');
-                return;
-            }
-            try {
-                const response = await fetch(`http://localhost:3000/patient/${id}`);
-                const result = await response.json();
-                if (response.ok) {
-                    document.getElementById('update-firstname').value = result.firstname;
-                    document.getElementById('update-lastname').value = result.lastname;
-                    document.getElementById('update-dob').value = result.dob;
-                    document.getElementById('update-gender').value = result.gender;
-                    document.getElementById('update-patient-form').style.display = 'block';
-                    showMessage(`Patient ${result.firstname} ${result.lastname} loaded`, 'success');
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Fetch failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        });
+        <h2 id="doctor-form-title">Add New Doctor</h2>
+        <form id="doctor-form">
+            <input type="hidden" id="doctor-id">
+            <div class="form-row">
+                <div>
+                    <label>First Name:</label>
+                    <input type="text" id="doctor-firstname" required>
+                </div>
+                <div>
+                    <label>Last Name:</label>
+                    <input type="text" id="doctor-lastname" required>
+                </div>
+            </div>
+            <div>
+                <label>Specialization:</label>
+                <input type="text" id="doctor-specialization" required>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="doctor-submit">Add Doctor</button>
+                <button type="button" id="doctor-cancel" style="display:none;" onclick="resetDoctorForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
 
-        document.getElementById('update-patient-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const id = document.getElementById('manage-id').value.trim();
-            const data = {
-                firstname: document.getElementById('update-firstname').value,
-                lastname: document.getElementById('update-lastname').value,
-                dob: document.getElementById('update-dob').value,
-                gender: document.getElementById('update-gender').value
-            };
-            try {
-                const response = await fetch(`http://localhost:3000/patient/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showMessage('Patient updated successfully!', 'success');
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Update failed:', err);
-                showMessage('Network Error during update!', 'error');
-            }
-        });
+    <!-- Room Tab -->
+    <div id="room-tab" class="tab-content">
+        <div class="search-options">
+            <div>
+                <label>Search Rooms:</label>
+                <input type="text" id="room-search" placeholder="Enter room type or status">
+                <button type="button" onclick="searchRooms()">Search</button>
+                <button type="button" onclick="resetRoomSearch()">Reset</button>
+            </div>
+        </div>
 
-        document.getElementById('delete-patient').addEventListener('click', async function() {
-            const id = document.getElementById('manage-id').value.trim();
-            if(!id) {
-                showMessage('Please enter a patient ID.', 'warning');
-                return;
-            }
-            if(!confirm('Are you sure you want to delete this patient?')) return;
-            
-            try {
-                const response = await fetch(`http://localhost:3000/patient/${id}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showMessage('Patient deleted successfully!', 'success');
-                    document.getElementById('update-patient-form').reset();
-                    document.getElementById('update-patient-form').style.display = 'none';
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Delete failed:', err);
-                showMessage('Network Error during deletion!', 'error');
-            }
-        });
+        <div id="room-results">
+            <table id="room-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-        // Bill Management
-        document.getElementById('fetch-bills').addEventListener('click', async function() {
-            const pId = document.getElementById('bill-patient-id').value.trim();
-            if(!pId) {
-                showMessage('Please enter a patient ID.', 'warning');
-                return;
-            }
-            try {
-                const response = await fetch(`http://localhost:3000/bill/patient/${pId}`);
-                const result = await response.json();
-                if (response.ok) {
-                    if (result.length === 0) {
-                        showMessage('No bills found for this patient.', 'info');
-                        document.getElementById('bill-results').innerHTML = '';
-                    } else {
-                        let output = '<h3>Patient Bills:</h3><table border="1"><tr><th>Bill ID</th><th>Total Amount</th><th>Payment Status</th><th>Due</th><th>Actions</th></tr>';
-                        result.forEach(bill => {
-                            output += `<tr>
-                                <td>${bill.bill_id}</td>
-                                <td>${bill.total_amount}</td>
-                                <td>${bill.payment_statue}</td>
-                                <td>${bill.due}</td>
-                                <td>
-                                    <button onclick="editBill(${bill.bill_id})">Edit</button>
-                                </td>
-                            </tr>`;
-                        });
-                        output += '</table>';
-                        document.getElementById('bill-results').innerHTML = output;
-                    }
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Fetch failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        });
+        <h2 id="room-form-title">Add New Room</h2>
+        <form id="room-form">
+            <input type="hidden" id="room-id">
+            <div>
+                <label>Room Type:</label>
+                <input type="text" id="room-type" required>
+            </div>
+            <div>
+                <label>Status:</label>
+                <select id="room-status" required>
+                    <option value="Available">Available</option>
+                    <option value="Occupied">Occupied</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="room-submit">Add Room</button>
+                <button type="button" id="room-cancel" style="display:none;" onclick="resetRoomForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
 
-        document.getElementById('fetch-bill').addEventListener('click', async function() {
-            const billId = document.getElementById('bill-id').value.trim();
-            if(!billId) {
-                showMessage('Please enter a bill ID.', 'warning');
-                return;
-            }
-            try {
-                const response = await fetch(`http://localhost:3000/bill/${billId}`);
-                const result = await response.json();
-                if (response.ok) {
-                    let output = '<h3>Bill Details:</h3><ul>';
-                    output += `<li>Bill ID: ${result.bill_id}</li>`;
-                    output += `<li>Patient ID: ${result.p_id}</li>`;
-                    output += `<li>Total Amount: ${result.total_amount}</li>`;
-                    output += `<li>Payment Status: ${result.payment_statue}</li>`;
-                    output += `<li>Due: ${result.due}</li></ul>`;
-                    document.getElementById('bill-results').innerHTML = output;
-                    
-                    // Fill form for editing
-                    document.getElementById('edit-bill-id').value = result.bill_id;
-                    document.getElementById('bill-p-id').value = result.p_id;
-                    document.getElementById('bill-amount').value = result.total_amount;
-                    document.getElementById('bill-status').value = result.payment_statue;
-                    document.getElementById('bill-due').value = result.due;
-                    
-                    // Show update buttons
-                    document.getElementById('save-bill').style.display = 'none';
-                    document.getElementById('update-bill').style.display = 'inline-block';
-                    document.getElementById('cancel-edit').style.display = 'inline-block';
-                    document.getElementById('delete-bill').style.display = 'inline-block';
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Fetch failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        });
+    <!-- Appointment Tab -->
+    <div id="appointment-tab" class="tab-content">
+        <div class="search-options">
+            <div>
+                <label>Search Appointments:</label>
+                <input type="text" id="appointment-search" placeholder="Enter patient or doctor name">
+                <button type="button" onclick="searchAppointments()">Search</button>
+                <button type="button" onclick="resetAppointmentSearch()">Reset</button>
+            </div>
+        </div>
 
-        // Edit bill function (used in the table)
-        window.editBill = async function(billId) {
-            try {
-                const response = await fetch(`http://localhost:3000/bill/${billId}`);
-                const result = await response.json();
-                if (response.ok) {
-                    document.getElementById('edit-bill-id').value = result.bill_id;
-                    document.getElementById('bill-p-id').value = result.p_id;
-                    document.getElementById('bill-amount').value = result.total_amount;
-                    document.getElementById('bill-status').value = result.payment_statue;
-                    document.getElementById('bill-due').value = result.due;
-                    
-                    // Show update buttons
-                    document.getElementById('save-bill').style.display = 'none';
-                    document.getElementById('update-bill').style.display = 'inline-block';
-                    document.getElementById('cancel-edit').style.display = 'inline-block';
-                    document.getElementById('delete-bill').style.display = 'inline-block';
-                    
-                    showMessage('Bill loaded for editing', 'success');
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Fetch failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        };
+        <div id="appointment-results">
+            <table id="appointment-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-        // Add new bill
-        document.getElementById('bill-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const data = {
-                p_id: document.getElementById('bill-p-id').value,
-                total_amount: document.getElementById('bill-amount').value,
-                payment_statue: document.getElementById('bill-status').value,
-                due: document.getElementById('bill-due').value || 0.00
-            };
-            
-            try {
-                const response = await fetch('http://localhost:3000/bill', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showMessage('Bill added successfully!', 'success');
-                    document.getElementById('bill-form').reset();
-                    // Refresh bills list if we have a patient ID
-                    if (data.p_id) {
-                        document.getElementById('bill-patient-id').value = data.p_id;
-                        document.getElementById('fetch-bills').click();
-                    }
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Add failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        });
+        <h2 id="appointment-form-title">Schedule Appointment</h2>
+        <form id="appointment-form">
+            <input type="hidden" id="appointment-id">
+            <div class="form-row">
+                <div>
+                    <label>Patient:</label>
+                    <select id="appointment-patient" required></select>
+                </div>
+                <div>
+                    <label>Doctor:</label>
+                    <select id="appointment-doctor" required></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Date:</label>
+                    <input type="date" id="appointment-date" required>
+                </div>
+                <div>
+                    <label>Time:</label>
+                    <input type="time" id="appointment-time" required>
+                </div>
+            </div>
+            <div>
+                <label>Status:</label>
+                <select id="appointment-status" required>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="appointment-submit">Schedule</button>
+                <button type="button" id="appointment-cancel" style="display:none;" onclick="resetAppointmentForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
 
-        // Update bill
-        document.getElementById('update-bill').addEventListener('click', async function() {
-            const billId = document.getElementById('edit-bill-id').value;
-            const data = {
-                total_amount: document.getElementById('bill-amount').value,
-                payment_statue: document.getElementById('bill-status').value,
-                due: document.getElementById('bill-due').value || 0.00
-            };
-            
-            try {
-                const response = await fetch(`http://localhost:3000/bill/${billId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showMessage('Bill updated successfully!', 'success');
-                    resetBillForm();
-                    // Refresh bills list if we have a patient ID
-                    const pId = document.getElementById('bill-p-id').value;
-                    if (pId) {
-                        document.getElementById('bill-patient-id').value = pId;
-                        document.getElementById('fetch-bills').click();
-                    }
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Update failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        });
+    <!-- Admission Tab -->
+    <div id="admission-tab" class="tab-content">
+        <div class="search-options">
+            <div>
+                <label>Search Admissions:</label>
+                <input type="text" id="admission-search" placeholder="Enter patient name or room type">
+                <button type="button" onclick="searchAdmissions()">Search</button>
+                <button type="button" onclick="resetAdmissionSearch()">Reset</button>
+            </div>
+        </div>
 
-        // Delete bill
-        document.getElementById('delete-bill').addEventListener('click', async function() {
-            const billId = document.getElementById('edit-bill-id').value;
-            if(!confirm('Are you sure you want to delete this bill?')) return;
-            
-            try {
-                const response = await fetch(`http://localhost:3000/bill/${billId}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showMessage('Bill deleted successfully!', 'success');
-                    resetBillForm();
-                    // Refresh bills list if we have a patient ID
-                    const pId = document.getElementById('bill-p-id').value;
-                    if (pId) {
-                        document.getElementById('bill-patient-id').value = pId;
-                        document.getElementById('fetch-bills').click();
-                    }
-                } else {
-                    showMessage('Error: ' + result.error, 'error');
-                }
-            } catch(err) {
-                console.error('Delete failed:', err);
-                showMessage('Network Error!', 'error');
-            }
-        });
+        <div id="admission-results">
+            <table id="admission-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Room</th>
+                        <th>Admission Date</th>
+                        <th>Discharge Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-        // Cancel edit
-        document.getElementById('cancel-edit').addEventListener('click', function() {
-            resetBillForm();
-            showMessage('Edit cancelled', 'info');
-        });
+        <h2 id="admission-form-title">New Admission</h2>
+        <form id="admission-form">
+            <input type="hidden" id="admission-id">
+            <div class="form-row">
+                <div>
+                    <label>Patient:</label>
+                    <select id="admission-patient" required></select>
+                </div>
+                <div>
+                    <label>Room:</label>
+                    <select id="admission-room" required></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Admission Date:</label>
+                    <input type="date" id="admission-date" required>
+                </div>
+                <div>
+                    <label>Discharge Date:</label>
+                    <input type="date" id="discharge-date" required>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="admission-submit">Admit Patient</button>
+                <button type="button" id="admission-cancel" style="display:none;" onclick="resetAdmissionForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
 
-        // Reset bill form to add mode
-        function resetBillForm() {
-            document.getElementById('bill-form').reset();
-            document.getElementById('edit-bill-id').value = '';
-            document.getElementById('save-bill').style.display = 'inline-block';
-            document.getElementById('update-bill').style.display = 'none';
-            document.getElementById('cancel-edit').style.display = 'none';
-            document.getElementById('delete-bill').style.display = 'none';
-        }
-    </script>
+    <!-- Medical Record Tab -->
+    <div id="medical-record-tab" class="tab-content">
+        <div class="search-options">
+            <div>
+                <label>Search Medical Records:</label>
+                <input type="text" id="record-search" placeholder="Enter patient or doctor name">
+                <button type="button" onclick="searchMedicalRecords()">Search</button>
+                <button type="button" onclick="resetMedicalRecordSearch()">Reset</button>
+            </div>
+        </div>
+
+        <div id="medical-record-results">
+            <table id="medical-record-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Diagnosis</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h2 id="medical-record-form-title">New Medical Record</h2>
+        <form id="medical-record-form">
+            <input type="hidden" id="medical-record-id">
+            <div class="form-row">
+                <div>
+                    <label>Patient:</label>
+                    <select id="medical-record-patient" required></select>
+                </div>
+                <div>
+                    <label>Doctor:</label>
+                    <select id="medical-record-doctor" required></select>
+                </div>
+            </div>
+            <div>
+                <label>Date of Visit:</label>
+                <input type="date" id="medical-record-date" required>
+            </div>
+            <div>
+                <label>Diagnosis:</label>
+                <textarea id="medical-record-diagnosis" required></textarea>
+            </div>
+            <div>
+                <label>Prescription:</label>
+                <textarea id="medical-record-prescription" required></textarea>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="medical-record-submit">Add Record</button>
+                <button type="button" id="medical-record-cancel" style="display:none;" onclick="resetMedicalRecordForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bill Tab -->
+    <div id="bill-tab" class="tab-content">
+        <div class="search-options">
+            <div>
+                <label>Search Bills:</label>
+                <input type="text" id="bill-search" placeholder="Enter patient name or bill ID">
+                <button type="button" onclick="searchBills()">Search</button>
+                <button type="button" onclick="resetBillSearch()">Reset</button>
+            </div>
+        </div>
+
+        <div id="bill-results">
+            <table id="bill-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Due</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h2 id="bill-form-title">New Bill</h2>
+        <form id="bill-form">
+            <input type="hidden" id="bill-id">
+            <div>
+                <label>Patient:</label>
+                <select id="bill-patient" required></select>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Total Amount:</label>
+                    <input type="number" step="0.01" id="bill-amount" required>
+                </div>
+                <div>
+                    <label>Payment Status:</label>
+                    <select id="bill-status" required>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Partial">Partial</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label>Due Amount:</label>
+                <input type="number" step="0.01" id="bill-due" value="0.00">
+            </div>
+            <div class="action-buttons">
+                <button type="submit" id="bill-submit">Add Bill</button>
+                <button type="button" id="bill-cancel" style="display:none;" onclick="resetBillForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
