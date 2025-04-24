@@ -21,12 +21,10 @@ connection.connect((err) => {
     console.log('Connected to MySQL database!');
 });
 
-// Root endpoint
 app.get('/', (req, res) => {
     res.send('Hospital Management System API is running!');
 });
 
-// PATIENT ENDPOINTS
 app.get('/patient', (req, res) => {
     connection.query('SELECT * FROM patient', (err, results) => {
         if (err) return res.status(500).json({ error: 'Server error' });
@@ -169,8 +167,6 @@ app.delete('/bill/:id', (req, res) => {
         }
     );
 });
-
-// ROOM ENDPOINTS
 app.get('/room', (req, res) => {
     connection.query('SELECT * FROM room', (err, results) => {
         if (err) return res.status(500).json({ error: 'Server error' });
@@ -232,7 +228,6 @@ app.delete('/room/:id', (req, res) => {
     );
 });
 
-// DOCTOR ENDPOINTS
 app.get('/doctor', (req, res) => {
     connection.query('SELECT * FROM doctor', (err, results) => {
         if (err) return res.status(500).json({ error: 'Server error' });
@@ -294,7 +289,6 @@ app.delete('/doctor/:id', (req, res) => {
     );
 });
 
-// APPOINTMENT ENDPOINTS
 app.get('/appointment', (req, res) => {
     connection.query(`
         SELECT a.*, p.firstname as patient_firstname, p.lastname as patient_lastname, 
@@ -395,7 +389,6 @@ app.delete('/appointment/:id', (req, res) => {
     );
 });
 
-// ADMISSION ENDPOINTS
 app.get('/admission', (req, res) => {
     connection.query(`
         SELECT a.*, p.firstname as patient_firstname, p.lastname as patient_lastname, 
@@ -448,8 +441,7 @@ app.post('/admission', (req, res) => {
         [p_id, room_id, admission_date, discharge_date],
         (err, result) => {
             if (err) return res.status(500).json({ error: 'Database error' });
-            
-            // Update room status to occupied
+
             connection.query(
                 'UPDATE room SET availability_status="Occupied" WHERE room_id=?',
                 [room_id],
@@ -470,7 +462,6 @@ app.put('/admission/:id', (req, res) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
     
-    // First get the old room_id
     connection.query(
         'SELECT room_id FROM admission WHERE admission_id = ?',
         [admissionId],
@@ -479,18 +470,14 @@ app.put('/admission/:id', (req, res) => {
             if (results.length === 0) return res.status(404).json({ error: 'Admission not found' });
             
             const oldRoomId = results[0].room_id;
-            
-            // Update the admission
+
             connection.query(
                 'UPDATE admission SET p_id=?, room_id=?, admission_date=?, discharge_date=? WHERE admission_id=?',
                 [p_id, room_id, admission_date, discharge_date, admissionId],
                 (err, result) => {
                     if (err) return res.status(500).json({ error: 'Database error' });
                     if (result.affectedRows === 0) return res.status(404).json({ error: 'Admission not found' });
-                    
-                    // Update room statuses
                     if (oldRoomId != room_id) {
-                        // Set old room to available
                         connection.query(
                             'UPDATE room SET availability_status="Available" WHERE room_id=?',
                             [oldRoomId],
@@ -499,7 +486,6 @@ app.put('/admission/:id', (req, res) => {
                             }
                         );
                         
-                        // Set new room to occupied
                         connection.query(
                             'UPDATE room SET availability_status="Occupied" WHERE room_id=?',
                             [room_id],
@@ -518,9 +504,7 @@ app.put('/admission/:id', (req, res) => {
 
 app.delete('/admission/:id', (req, res) => {
     const admissionId = req.params.id;
-    
-    // First get the room_id
-    connection.query(
+        connection.query(
         'SELECT room_id FROM admission WHERE admission_id = ?',
         [admissionId],
         (err, results) => {
@@ -528,8 +512,6 @@ app.delete('/admission/:id', (req, res) => {
             if (results.length === 0) return res.status(404).json({ error: 'Admission not found' });
             
             const roomId = results[0].room_id;
-            
-            // Delete the admission
             connection.query(
                 'DELETE FROM admission WHERE admission_id = ?',
                 [admissionId],
@@ -553,7 +535,6 @@ app.delete('/admission/:id', (req, res) => {
     );
 });
 
-// MEDICAL RECORD ENDPOINTS
 app.get('/medicalrecord', (req, res) => {
     connection.query(`
         SELECT m.*, p.firstname as patient_firstname, p.lastname as patient_lastname, 
@@ -640,13 +621,10 @@ app.delete('/medicalrecord/:id', (req, res) => {
         }
     );
 });
-
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Something went wrong!' });
 });
-
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

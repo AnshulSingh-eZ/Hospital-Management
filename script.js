@@ -130,7 +130,7 @@ function renderPatientTable(patientList) {
         row.innerHTML = `
             <td>${patient.p_id}</td>
             <td>${patient.firstname} ${patient.lastname}</td>
-            <td>${patient.dob}</td>
+            <td>${patient.dob.split("T")[0]}</td>
             <td>${patient.gender}</td>
             <td>
                 <button onclick="editPatient(${patient.p_id})">Edit</button>
@@ -595,8 +595,8 @@ function renderAppointmentTable(appointmentList) {
             <td>${appointment.appointment_id}</td>
             <td>${appointment.patient_firstname} ${appointment.patient_lastname}</td>
             <td>${appointment.doctor_firstname} ${appointment.doctor_lastname}</td>
-            <td>${appointment.appointment_date}</td>
-            <td>${appointment.appointment_time}</td>
+            <td>${appointment.appointment_date.split("T")[0]}</td>
+            <td>${appointment.appointment_time.split("T")[1]}</td>
             <td>${appointment.status}</td>
             <td>
                 <button onclick="editAppointment(${appointment.appointment_id})">Edit</button>
@@ -614,8 +614,8 @@ function editAppointment(appointmentId) {
     document.getElementById('appointment-id').value = appointment.appointment_id;
     document.getElementById('appointment-patient').value = appointment.p_id;
     document.getElementById('appointment-doctor').value = appointment.d_id;
-    document.getElementById('appointment-date').value = appointment.appointment_date;
-    document.getElementById('appointment-time').value = appointment.appointment_time;
+    document.getElementById('appointment-date').value = appointment.appointment_date.split("T")[0];
+    document.getElementById('appointment-time').value = appointment.appointment_time.split("T")[1];
     document.getElementById('appointment-status').value = appointment.status;
 
     document.getElementById('appointment-form-title').textContent = 'Edit Appointment';
@@ -637,8 +637,8 @@ function handleAppointmentSubmit() {
     const data = {
         p_id: document.getElementById('appointment-patient').value,
         d_id: document.getElementById('appointment-doctor').value,
-        appointment_date: document.getElementById('appointment-date').value,
-        appointment_time: document.getElementById('appointment-time').value,
+        appointment_date: document.getElementById('appointment-date').value.split("T")[0],
+        appointment_time: document.getElementById('appointment-time').value.split("T")[1],
         status: document.getElementById('appointment-status').value
     };
 
@@ -737,8 +737,8 @@ function renderAdmissionTable(admissionList) {
             <td>${admission.admission_id}</td>
             <td>${admission.patient_firstname} ${admission.patient_lastname}</td>
             <td>${admission.roomtype}</td>
-            <td>${admission.admission_date}</td>
-            <td>${admission.discharge_date}</td>
+            <td>${admission.admission_date.split("T")[0]}</td>
+            <td>${admission.discharge_date.split("T")[0]}</td>
             <td>
                 <button onclick="editAdmission(${admission.admission_id})">Edit</button>
                 <button class="danger" onclick="deleteAdmission(${admission.admission_id})">Delete</button>
@@ -755,8 +755,8 @@ function editAdmission(admissionId) {
     document.getElementById('admission-id').value = admission.admission_id;
     document.getElementById('admission-patient').value = admission.p_id;
     document.getElementById('admission-room').value = admission.room_id;
-    document.getElementById('admission-date').value = admission.admission_date;
-    document.getElementById('discharge-date').value = admission.discharge_date;
+    document.getElementById('admission-date').value = admission.admission_date.split("T")[0];
+    document.getElementById('discharge-date').value = admission.discharge_date.split("T")[0];
 
     document.getElementById('admission-form-title').textContent = 'Edit Admission';
     document.getElementById('admission-submit').textContent = 'Update Admission';
@@ -777,8 +777,8 @@ function handleAdmissionSubmit() {
     const data = {
         p_id: document.getElementById('admission-patient').value,
         room_id: document.getElementById('admission-room').value,
-        admission_date: document.getElementById('admission-date').value,
-        discharge_date: document.getElementById('discharge-date').value
+        admission_date: document.getElementById('admission-date').value.split("T")[0],
+        discharge_date: document.getElementById('discharge-date').value.split("T")[0]
     };
 
     if (!data.p_id || !data.room_id || !data.admission_date || !data.discharge_date) {
@@ -878,7 +878,7 @@ function renderMedicalRecordTable(recordList) {
             <td>${record.record_id}</td>
             <td>${record.patient_firstname} ${record.patient_lastname}</td>
             <td>${record.doctor_firstname} ${record.doctor_lastname}</td>
-            <td>${record.date_of_visit}</td>
+            <td>${record.date_of_visit.split("T")[0]}</td>
             <td>${record.diagnosis}</td>
             <td>
                 <button onclick="editMedicalRecord(${record.record_id})">Edit</button>
@@ -896,7 +896,7 @@ function editMedicalRecord(recordId) {
     document.getElementById('medical-record-id').value = record.record_id;
     document.getElementById('medical-record-patient').value = record.p_id;
     document.getElementById('medical-record-doctor').value = record.d_id;
-    document.getElementById('medical-record-date').value = record.date_of_visit;
+    document.getElementById('medical-record-date').value = record.date_of_visit.split("T")[0];
     document.getElementById('medical-record-diagnosis').value = record.diagnosis;
     document.getElementById('medical-record-prescription').value = record.prescription;
 
@@ -919,7 +919,7 @@ function handleMedicalRecordSubmit() {
     const data = {
         p_id: document.getElementById('medical-record-patient').value,
         d_id: document.getElementById('medical-record-doctor').value,
-        date_of_visit: document.getElementById('medical-record-date').value,
+        date_of_visit: document.getElementById('medical-record-date').value.split("T")[0],
         diagnosis: document.getElementById('medical-record-diagnosis').value,
         prescription: document.getElementById('medical-record-prescription').value
     };
